@@ -1,0 +1,102 @@
+section
+  section
+    h2 Objects
+    ul
+      li JavaScript is an object-oriented language
+      li Objects are first-class citizens
+      li Object model is prototype-based:
+        |<br/> &rArr; vastly different from other languages
+
+  section
+    h2 Everything is an object
+    ul
+      li Everything in JavaScript acts like an object:
+        |<br/>numbers, strings, even functions
+      li There are only two exceptions to this rule:
+        |<br/><code>null</code> and <code>undefined</code>
+      pre: code.
+        false.toString();     // -> 'false'
+        [1, 2, 3].toString(); // -> '1, 2, 3'
+
+        // functions are objects too:
+        function Foo() {}
+        Foo.bar = 1;
+        Foo.bar;              // -> 1
+
+  section
+    h2 Numbers, you say?
+    ul
+      li Why does this not work?
+      pre: code.
+        2.toString();         // -> SyntaxError
+
+      li What's going on here?
+        ul
+          li the period causes the parser to assume
+            |this is a floating point number
+          li the next token is expected to be a digit
+
+  section
+    h2 How do we fix it?
+    ul
+      li Force the parser to change its mind:
+    pre: code.
+      2..toString();    // second dot works correctly
+      2 .toString();    // space before the dot
+      (2).toString();   // force evaluation order
+
+  section
+    h2 Objects are HashMaps
+    ul
+      li Objects in JavaScript map keys to values:
+      pre: code.
+        var obj = {};   // empty object literal
+
+        // literal object with a property
+        // 'value' with a value of 12
+        var other_obj = { value: 12 };
+      li We can access them in two ways:
+      pre: code.
+        other_obj.value;    // -> 12
+        other_obj['value']  // -> 12
+
+  section
+    h2 Objects are HashMaps, Part II
+    ul
+      li We can iterate over all keys of an object:
+      pre: code.
+        var obj = {
+          foo: 1,
+          bar: 2,
+          other: 'string'
+        };
+
+        for (var key in obj) {
+          console.log(key + '=' + obj[key]);
+        }
+      li This prints out the following:
+      pre: code.
+        foo=1
+        bar=2
+        other=string
+
+  section
+    h2 Objects are HashMaps, Part III
+    ul 
+      li If objects are hashmaps, and functions are objects –
+        |<br/>What's to stop me from doing this?
+      pre: code.
+        var obj = function() {};  // function instead of object literal
+        obj.foo = 1;
+        obj.bar = 2;
+        obj.other = 'string';
+
+        for (var key in obj) {
+          console.log(key + '=' + obj[key]);
+        }
+      li Result: it works!
+      pre: code.
+        foo=1
+        bar=2
+        other=string
+      li Question: Does that seem like a good idea?
