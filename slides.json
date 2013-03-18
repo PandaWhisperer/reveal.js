@@ -8,6 +8,7 @@
 	"slides": [
 		"title",
     "overview",
-    "objects"
+    "objects",
+    "inheritance"
 	]
 }

@@ -1,0 +1,68 @@
+section
+  section
+    h2 Inheritance
+    ul
+      li JavaScript's object model is "prototype-based"
+      li Significantly different from other "common" OO models (Java, Ruby, etc.)
+      li Most important difference: there are no classes
+
+  section
+    h1 WAT?
+
+  section
+    h2 No classes, are you serious?
+    ul
+      li JavaScript really does not have a class system built in
+      li BUT - it's fairly easy to implement one <em>on top</em>
+      pre: code.
+        // Simple class model, no inheritance
+        function Class(constructor, properties) {
+          if (typeof constructor === "object") {
+            return Class(function() {}, constructor)
+          } else {
+            // constructor
+            function klass() {
+              constructor.apply(this, arguments);
+            }
+
+            // prototype - more on this later
+            klass.prototype = properties;
+
+            return klass;
+          }
+        }
+
+  section
+    h2 Rolling our own classes
+    ul
+      li Let's use it!
+      pre: code.
+        var Car = new Class(
+          function(name) {
+            this.name = name;
+          }, {
+            drive: function() {
+              console.log(this.name + " goes: vrooom!");
+            }
+          });
+
+        var ferrari = new Car("Ferrari");
+        ferrari.drive();  
+        // Output: "Ferrari goes: vrooom!"
+
+  section
+    h2 Still missing some stuff:
+    ul
+      li Inheritance
+      li Static methods
+      li Private instance variables
+      li But it works...
+
+  section
+    h2 Prototype, what's that?
+    ul
+      li JavaScript's object model is <em>prototype</em>-based (mmkay?)
+      li Every object has a special property called <code>prototype</code>
+      li An object's <em>prototype</em> is just another object
+      li That object in turn has a prototype, creating what's known as a <em>prototype chain</em>
+      li If no protype is set explicity, it will be <code>Object</code>
