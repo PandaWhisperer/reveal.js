@@ -6,11 +6,9 @@ section
       * Significantly different from the "classic" OO model (C++, Java, Ruby, etc.)
       * Most important difference: **there are no classes**
 
-    aside.notes
-      This is a test
-
   section
-    h1 WAT?
+    :markdown
+      # WAT?
 
   section
     :markdown
@@ -24,17 +22,17 @@ section
   section
     :markdown
       ## The Prototype
-      * JavaScript's object model is *prototype*-based (mmkay?)
+      * JavaScript's object model is *prototype*-based
       * Every object has a special property called `prototype`
       * An object's *prototype* is just another object
       * That object in turn has a prototype, creating what's known as a *prototype chain*
       * If no protype is set explicity, it will be `Object`
 
   section
-    h2 Rolling our own classes
-    ul
-      li BUT - it's fairly easy to implement one <em>on top</em>
-      pre: code.
+    :markdown
+      ## Rolling our own classes
+      * BUT - it's fairly easy to implement one *on top*
+    pre: code.
         // Simple class model, no inheritance
         function Class(constructor, properties) {
           if (typeof constructor === "object") {
@@ -54,10 +52,10 @@ section
         }
 
   section
-    h2 Rolling our own classes
-    ul
-      li Let's use it!
-      pre: code.
+    :markdown
+      ## Rolling our own classes
+      Let's use it!
+    pre: code.
         var Car = new Class(
           function(name) {
             this.name = name;
@@ -72,10 +70,10 @@ section
         // Output: "Ferrari goes: vrooom!"
 
   section
-    h2 Still missing some stuff:
-    ul
-      li Inheritance
-      li Static methods
-      li Private instance variables
-      li But it works...
+    :markdown
+      ## Still missing some stuff:
+      * Inheritance
+      * Static methods
+      * Private instance variables
+      * But it works...
 
