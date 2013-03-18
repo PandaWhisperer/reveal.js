@@ -1,18 +1,38 @@
 section
   section
-    h2 Inheritance
-    ul
-      li JavaScript's object model is "prototype-based"
-      li Significantly different from other "common" OO models (Java, Ruby, etc.)
-      li Most important difference: there are no classes
+    :markdown
+      ## Inheritance
+      * JavaScript's object model is *prototype*-based
+      * Significantly different from the "classic" OO model (C++, Java, Ruby, etc.)
+      * Most important difference: **there are no classes**
+
+    aside.notes
+      This is a test
 
   section
     h1 WAT?
 
   section
-    h2 No classes, are you serious?
+    :markdown
+      ## No classes, are you serious?
+      * JavaScript has no concept of classes built into the language
+      * Instead, all we have are *instances* of objects
+      * New objects can be created by *copying* existing objects
+      * These objects remember which object they were copied from, and
+        inherit certain features
+
+  section
+    :markdown
+      ## The Prototype
+      * JavaScript's object model is *prototype*-based (mmkay?)
+      * Every object has a special property called `prototype`
+      * An object's *prototype* is just another object
+      * That object in turn has a prototype, creating what's known as a *prototype chain*
+      * If no protype is set explicity, it will be `Object`
+
+  section
+    h2 Rolling our own classes
     ul
-      li JavaScript really does not have a class system built in
       li BUT - it's fairly easy to implement one <em>on top</em>
       pre: code.
         // Simple class model, no inheritance
@@ -27,6 +47,7 @@ section
 
             // prototype - more on this later
             klass.prototype = properties;
+            klass.prototype.constructor = constructor;
 
             return klass;
           }
@@ -58,11 +79,3 @@ section
       li Private instance variables
       li But it works...
 
-  section
-    h2 Prototype, what's that?
-    ul
-      li JavaScript's object model is <em>prototype</em>-based (mmkay?)
-      li Every object has a special property called <code>prototype</code>
-      li An object's <em>prototype</em> is just another object
-      li That object in turn has a prototype, creating what's known as a <em>prototype chain</em>
-      li If no protype is set explicity, it will be <code>Object</code>
