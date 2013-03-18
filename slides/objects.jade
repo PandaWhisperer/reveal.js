@@ -1,20 +1,21 @@
 section
   section
-    h2 Objects
-    ul
-      li JavaScript is an object-oriented language
-      li Objects are first-class citizens
-      li Object model is prototype-based:
-        |<br/> &rArr; vastly different from other languages
+    :markdown
+      ## Objects
+      * JavaScript is an object-oriented language
+      * Objects are first-class citizens
+      * Object model is prototype-based: <br/>
+        &rArr; vastly different from other languages
 
   section
-    h2 Everything is an object
-    ul
-      li Everything in JavaScript acts like an object:
-        |<br/>numbers, strings, even functions
-      li There are only two exceptions to this rule:
-        |<br/><code>null</code> and <code>undefined</code>
-      pre: code.
+    :markdown
+      ## Everything is an object
+      * Everything in JavaScript acts like an object: <br/>
+        numbers, strings, even functions
+      * There are only two exceptions to this rule: <br/>
+        `null` and `undefined`
+
+    pre: code.
         false.toString();     // -> 'false'
         [1, 2, 3].toString(); // -> '1, 2, 3'
 
@@ -27,19 +28,21 @@ section
     h2 Numbers, you say?
     ul
       li Why does this not work?
+
       pre: code.
-        2.toString();         // -> SyntaxError
+          2.toString();         // -> SyntaxError
 
       li What's going on here?
         ul
           li the period causes the parser to assume
-            |this is a floating point number
+            this is a floating point number
           li the next token is expected to be a digit
 
   section
-    h2 How do we fix it?
-    ul
-      li Force the parser to change its mind:
+    :markdown
+      ## How do we fix it?
+      * Force the parser to change its mind:
+
     pre: code.
       2..toString();    // second dot works correctly
       2 .toString();    // space before the dot
@@ -55,6 +58,7 @@ section
         // literal object with a property
         // 'value' with a value of 12
         var other_obj = { value: 12 };
+
       li We can access them in two ways:
       pre: code.
         other_obj.value;    // -> 12
