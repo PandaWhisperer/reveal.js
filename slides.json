@@ -1,6 +1,6 @@
 {
   "title": "JavaScript – Y U NO Make Sense?",
-  "author": "Christoph Wagner",
+  "author": "Christoph Wagner <cwagner@oversee.net>",
   "description": "Presentation about JavaScript, to be given at Oversee.net Brown Bag Lunch",
   "options": {
     "theme": "beige"
