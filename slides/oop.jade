@@ -8,7 +8,7 @@ section
           - Properties can be acessed using either `[]` or dot-notation
           - We can construct objects using literal notation (JSON)
           - Functions are values, just like primitive types
-      li.fragment Next step: let's make some "real" objects!
+      li Next step: let's make some "real" objects!
 
   section
     h2 Object Orientation, Part II
@@ -123,13 +123,13 @@ section
         a(href='#/2/4') previous question
 
         pre: code.
-          function print(obj) {
+          function show(obj) {
             for (var key in obj) {
               console.log(key + "=" + obj[key]);
             }
           }
 
-          print(ferrari);
+          show(ferrari);
 
       li Result:
 
@@ -139,18 +139,8 @@ section
             console.log(this.name + " goes vroom!");
           }
 
-      li What happened?
-
   section
     h2 The Prototype, Part III
-    ul
-      li <code>for in</code> iterates over <em>all</em> properties, 
-        |including those defined on the <code>prototype</code>
-      li This is the essence of JavaScript object model
-      li In fact, the inheritance can go further
-
-  section
-    h2 The Prototype, Part IV
     ul
       li <code>Car.prototype</code> could have its own prototype
 
@@ -159,19 +149,58 @@ section
             this.wheels = wheels;
           }
 
+          // redefine Car.prototype
           Car.prototype = new Vehicle(4);
           Car.prototype.drive = function() {...}
 
           var ferrari = new Car("Ferrari");
 
-          print(ferrari);
+          show(ferrari);
 
-      li.fragment Result:
+      li Result?
 
-        pre: code.
+        pre.fragment: code.
           name=Ferrari
           wheels=4
           drive=function () {
             console.log(this.name + " goes vroom!");
           }
 
+  section
+    h2 The Prototype, Part IV
+    ul
+      li What if we add something to the <code>Vehicle</code> prototype?
+
+        pre: code.
+          Vehicle.prototype.getAxes = function() {
+            // assume 2 wheels per axis
+            return this.wheels / 2;
+          }
+
+          show(ferrari);
+
+      li.fragment Result?
+
+        pre: code.
+          name=Ferrari
+          wheels=4
+          drive=function () {...}
+          getAxes=function () {...}
+
+      li.fragment The new function automatically appears to be a member
+        |of our <code>Car</code> instance
+      li.fragment We didn't even have to call the constructor again
+
+  section
+    :markdown
+      ## What have we learned?
+      * `for in` iterates over *all* properties, 
+        including those defined on the *prototype*
+      * In fact, looking up a property of an object traverses the
+        *entire* "prototype-chain" until either a match is 
+        found or the end of the chain is reached <br/>
+        (i.e. `prototype == undefined`)
+      * This is the *essence* of JavaScript's object model
+
+  section
+    h2 What next?
