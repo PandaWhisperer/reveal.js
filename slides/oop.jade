@@ -1,0 +1,177 @@
+section
+  section
+    h2 Object Orientation
+    ul
+      li What we've learned so far:
+        :markdown
+          - Objects are hashmaps, mapping keys to values
+          - Properties can be acessed using either `[]` or dot-notation
+          - We can construct objects using literal notation (JSON)
+          - Functions are values, just like primitive types
+      li.fragment Next step: let's make some "real" objects!
+
+  section
+    h2 Object Orientation, Part II
+    ul
+      li Since functions are values, we can assign them to properties
+
+        pre: code.
+          var car = {
+            name: "Ferrari",
+            drive: function() {
+              console.log(this.name + " goes vroom!");
+            }
+          }
+
+          car.drive();   // -> "Ferrari goes vroom!"
+
+       li.fragment And that's how you do OOP in JavaScript!
+
+  section
+    h2 Object Orientation, Part III
+    ul
+      li Obviously, this is kind of limited
+      li All we can do is construct literal objects
+      li What about classes, inheritance, etc.?
+      li First solution: constructor functions
+
+        pre.fragment: code.
+          function Car(name) {
+            this.name = name;
+            this.drive = function() {
+              console.log(this.name + " goes vroom!");
+            };
+          }
+
+          var ferrari = new Car("Ferrari");
+          ferrari.drive();  // -> "Ferrari goes vroom!"
+
+          var ford = new Car("Ford");
+          ford.drive();     // -> "Ford goes vroom!"
+
+  section
+    h2 Constructor Functions
+    ul
+      li What's happening here?
+      li The <code>new</code> operator allocates a new object
+      li In the context of the constructor, <code>this</code> refers 
+        |to new object
+
+        pre: code.
+          function Car(name) {
+            this.name = name;
+            this.drive = function() {
+              console.log(this.name + " goes vroom!");
+            };
+          }
+
+          var ferrari = new Car("Ferrari");
+
+      li.fragment <code>new</code> also sets the hidden <code>constructor</code> property
+
+        pre: code.
+          ferrari.constructor; // -> function Car() {...}
+
+  section
+    h2 Constructor Functions, Part II
+    ul
+      li Problem with this approach?
+
+        pre: code.
+          ferrari.drive // -> function () {
+                        //      console.log(this.name + " goes vroom!");
+                        //    }
+          ford.drive    // -> function () {
+                        //      console.log(this.name + " goes vroom!");
+                        //    }
+
+          ferrari.drive == ford.drive // -> false (duh!)
+
+      li We're wasting resources by defining the same function <em>twice</em>
+      li How can two objects share the same functionality?
+      li Solution: use the <em>prototype</em>
+
+  section
+    h2 The Prototype
+    ul
+      li Objects have another hidden property called <code>prototype</code>
+      li This is how to use it:
+
+        pre: code.
+          function Car(name) {
+            this.name = name;
+          }
+
+          Car.prototype.drive = function() {
+            console.log(this.name + " goes vroom!");
+          };
+
+          var ferrari = new Car("Ferrari");
+          ferrari.drive();  // -> "Ferrari goes vroom!"
+
+          var ford = new Car("Ford");
+          ford.drive();     // -> "Ford goes vroom!"
+
+          ferrari.drive == ford.drive // -> true
+
+      .fragment &rArr; We now have a simple pattern to do OOP
+
+  section
+    h2 The Prototype, Part II
+    ul
+      li Let's go back to our
+        a(href='#/2/4') previous question
+
+        pre: code.
+          function print(obj) {
+            for (var key in obj) {
+              console.log(key + "=" + obj[key]);
+            }
+          }
+
+          print(ferrari);
+
+      li Result:
+
+        pre: code.
+          name=Ferrari
+          drive=function () {
+            console.log(this.name + " goes vroom!");
+          }
+
+      li What happened?
+
+  section
+    h2 The Prototype, Part III
+    ul
+      li <code>for in</code> iterates over <em>all</em> properties, 
+        |including those defined on the <code>prototype</code>
+      li This is the essence of JavaScript object model
+      li In fact, the inheritance can go further
+
+  section
+    h2 The Prototype, Part IV
+    ul
+      li <code>Car.prototype</code> could have its own prototype
+
+        pre: code.
+          function Vehicle(wheels) {
+            this.wheels = wheels;
+          }
+
+          Car.prototype = new Vehicle(4);
+          Car.prototype.drive = function() {...}
+
+          var ferrari = new Car("Ferrari");
+
+          print(ferrari);
+
+      li.fragment Result:
+
+        pre: code.
+          name=Ferrari
+          wheels=4
+          drive=function () {
+            console.log(this.name + " goes vroom!");
+          }
+
