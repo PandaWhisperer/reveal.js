@@ -1,14 +1,18 @@
 section
   section
+    h1 Objects
+
+  section
     :markdown
       ## Objects
+      ### A quick recap
       * JavaScript is an object-oriented language
       * Everything in JavaScript acts like an object: <br/>
         numbers, strings, even functions
       * There are only two exceptions to this rule: <br/>
         `null` and `undefined`
 
-    pre.fragment: code.
+    pre: code.
         false.toString();     // -> 'false'
         [1, 2, 3].toString(); // -> '1, 2, 3'
 
@@ -33,9 +37,8 @@ section
 
       li.fragment What's going on here?
         ul
-          li The period causes the parser to assume
-            |this is a floating point number
-          li The next token is expected to be a digit
+          li Period causes parser to assume this is a floating point number
+          li Next token is expected to be a digit, not a property
 
       li.fragment How do we fix it? Force the parser to change its mind:
 
@@ -53,7 +56,7 @@ section
           // empty object literal
           var obj = {};
 
-          // literal object with properties
+          // literal object with properties (JSON)
           var obj = { foo: "bar", value: 42 };
 
       li.fragment We can access them in two ways:
