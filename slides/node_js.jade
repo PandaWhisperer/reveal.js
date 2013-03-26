@@ -131,3 +131,25 @@ section
           var Car = require('./car');
           var ferrari = new Car('Ferrari');
           ferrari.drive();
+
+  section
+    h2 exports vs. module.exports
+    ul 
+      li Of course, we could have also done this:
+
+        pre: code.
+          // file: car.js
+          var Car = function(name) {
+            // ...
+          }
+
+          exports.Car = Car;
+
+      li In which case, we would use our module like this:
+
+        pre: code.
+          var Car = require('./car').Car;
+          var ferrari = new Car('Ferrari');
+          ferrari.drive();
+
+      li This approach may make sense if our module wants to export more than one class
