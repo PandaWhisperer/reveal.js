@@ -1,5 +1,8 @@
 section
   section
+    h1 Working with Objects
+
+  section
     h2 Object Orientation
     ul
       li What we've learned so far:
@@ -13,7 +16,7 @@ section
   section
     h2 Object Orientation, Part II
     ul
-      li Since functions are values, we can assign them to properties
+      li Functions are values &rArr; we can assign them to properties
 
         pre: code.
           var car = {
@@ -25,22 +28,40 @@ section
 
           car.drive();   // -> "Ferrari goes vroom!"
 
-       li.fragment And that's how you do OOP in JavaScript!
+      li A <em>method</em> is simply a property whose value is a <em>function</em>
+      li When a function is called via an <em>object reference</em>,
+        |<code>this</code> will point to the object it was invoked on
+      li We can also do this explicitly via <code>call</code> or <code>apply</code>
+
+        pre: code.
+          var drive = car.drive;
+          drive(); // -> 'undefined goes vroom!'
+          drive.call(car, arguments);    // using an argument list
+          drive.apply(car, [arguments]); // using an argument array
 
   section
     h2 Object Orientation, Part III
     ul
-      li Obviously, this is kind of limited
+      li This approach seems fairly limited
       li All we can do is construct literal objects
+      li Essentially, all our objects are <em>singletons</em>
       li What about classes, inheritance, etc.?
-      li First solution: constructor functions
+      li Solution: constructor functions
 
-        pre.fragment: code.
+  section
+    h2 Constructor functions
+    ul
+      li A constructor function is actually just a regular function
+      li Only difference is the invocation with the <code>new</code> operator
+      li By convention, we use a <em>capitalized</em> name
+
+        pre: code.
           function Car(name) {
             this.name = name;
             this.drive = function() {
               console.log(this.name + " goes vroom!");
             };
+            // NOTE: no return statement!
           }
 
           var ferrari = new Car("Ferrari");
@@ -49,28 +70,8 @@ section
           var ford = new Car("Ford");
           ford.drive();     // -> "Ford goes vroom!"
 
-  section
-    h2 Constructor Functions
-    ul
-      li What's happening here?
       li The <code>new</code> operator allocates a new object
-      li In the context of the constructor, <code>this</code> refers 
-        |to new object
-
-        pre: code.
-          function Car(name) {
-            this.name = name;
-            this.drive = function() {
-              console.log(this.name + " goes vroom!");
-            };
-          }
-
-          var ferrari = new Car("Ferrari");
-
-      li.fragment <code>new</code> also sets the hidden <code>constructor</code> property
-
-        pre: code.
-          ferrari.constructor; // -> function Car() {...}
+      li The constructor function is invoked on the new object
 
   section
     h2 Constructor Functions, Part II
@@ -89,23 +90,34 @@ section
 
       li We're wasting resources by defining the same function <em>twice</em>
       li How can two objects share the same functionality?
-      li Solution: use the <em>prototype</em>
+
+  section
+    h2 Enter the Prototype
+    ul
+      li Objects have a hidden property called <code>prototype</code>
+      li This is actually just another object
+      li However, many objects can share the same prototype
+      li Properties defined on the prototype will be <em>shared</em> between 
+        |all objects with the same prototype
 
   section
     h2 The Prototype
     ul
-      li Objects have another hidden property called <code>prototype</code>
-      li This is how to use it:
+      li And here's how to use it:
 
-        pre: code.
+        pre(style="width: 110%"): code.
           function Car(name) {
             this.name = name;
           }
 
+          // define method(s) on the prototype
           Car.prototype.drive = function() {
             console.log(this.name + " goes vroom!");
           };
 
+      li.fragment Result:
+
+        pre(style="width: 110%"): code.
           var ferrari = new Car("Ferrari");
           ferrari.drive();  // -> "Ferrari goes vroom!"
 
@@ -114,93 +126,55 @@ section
 
           ferrari.drive == ford.drive // -> true
 
-      .fragment &rArr; We now have a simple pattern to do OOP
-
   section
-    h2 The Prototype, Part II
+    h2 The Prototype
+    h3 What happens behind the scenes
     ul
-      li Let's go back to our
-        a(href='#/2/4') previous question
+      li In addition to allocating a new object and calling the constructor on it,
+        |the <code>new</code> operator has another side effect
+      li It sets the hidden property <code>__proto__</code> of the new object to
+        |the value of <code>prototype</code> property of the constructor
 
-        pre: code.
-          function show(obj) {
-            for (var key in obj) {
-              console.log(key + "=" + obj[key]);
-            }
-          }
-
-          show(ferrari);
-
-      li Result:
-
-        pre: code.
-          name=Ferrari
-          drive=function () {
-            console.log(this.name + " goes vroom!");
-          }
+        pre: code.javascript.
+          ferrari.__proto__; // -> { drive: [Function] }
+          ferrari.__proto__ == Car.prototype;  // -> true
 
   section
-    h2 The Prototype, Part III
+    h2 The Prototype Chain
     ul
-      li <code>Car.prototype</code> could have its own prototype
+      li All objects have a <code>__proto__</code> property
+      li This creates what is know as the <em>prototype chain</em>
 
         pre: code.
-          function Vehicle(wheels) {
-            this.wheels = wheels;
-          }
+          ferrari.__proto__; // -> { drive: [Function] }
+          ferrari.__proto__.__proto__; // -> {}
+          ferrari.__proto__.__proto__.__proto__; // -> null
 
-          // redefine Car.prototype
-          Car.prototype = new Vehicle(4);
-          Car.prototype.drive = function() {...}
-
-          var ferrari = new Car("Ferrari");
-
-          show(ferrari);
-
-      li Result?
-
-        pre.fragment: code.
-          name=Ferrari
-          wheels=4
-          drive=function () {
-            console.log(this.name + " goes vroom!");
-          }
+      li Every time we look up a property, JavaScript traverses the
+        |entire chain in order to find it
+      li <code>null</code> signals the end of the chain
+      li If the property is not found, the result is <code>undefined</code>
+      li Only way to find out whether a property is inherited or not: <code>hasOwnProperty()</code>
 
   section
-    h2 The Prototype, Part IV
+    h2 hasOwnProperty()
     ul
-      li What if we add something to the <code>Vehicle</code> prototype?
+      li To find out whether a property is defined on a given object or inherited,
+        |JavaScript provides the <code>hasOwnProperty()</code> method
+      li This method is defined on <code>Object.prototype</code>
+      li Some examples:
 
-        pre: code.
-          Vehicle.prototype.getAxes = function() {
-            // assume 2 wheels per axis
-            return this.wheels / 2;
-          }
+        pre(style="width:100%"): code.javascript.
+          ferrari.hasOwnProperty('name');  // -> true
+          ferrari.hasOwnProperty('drive'); // -> false (inherited from prototype)
+          Car.prototype.hasOwnProperty('drive');             // -> true
+          Object.prototype.hasOwnProperty('hasOwnProperty'); // -> true
 
-          show(ferrari);
+      li.fragment Watch out: It is possible to <em>redefine</em> <code>hasOwnProperty</code>!
 
-      li.fragment Result?
+        pre: code.javascript.
+          ferrari.hasOwnProperty = function() { return true; } // works!
+          ferrari.hasOwnProperty('drive'); // -> true
 
-        pre: code.
-          name=Ferrari
-          wheels=4
-          drive=function () {...}
-          getAxes=function () {...}
+        &rArr; DON'T DO THAT!
 
-      li.fragment The new function automatically appears to be a member
-        |of our <code>Car</code> instance
-      li.fragment We didn't even have to call the constructor again
-
-  section
-    :markdown
-      ## What have we learned?
-      * `for in` iterates over *all* properties, 
-        including those defined on the *prototype*
-      * In fact, looking up a property of an object traverses the
-        *entire* "prototype-chain" until either a match is 
-        found or the end of the chain is reached <br/>
-        (i.e. `prototype == undefined`)
-      * This is the *essence* of JavaScript's object model
-
-  section
-    h2 What next?
