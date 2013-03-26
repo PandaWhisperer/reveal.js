@@ -1,0 +1,133 @@
+section
+  section
+    h1 Node.js
+
+  section
+    h2 Node.js Overview
+    ul
+      li Standalone JavaScript implementation for the CLI
+      li Basically Google V8 ripped out of the browser
+      li Comes with a class library for stuff like file I/O
+      li Makes JavaScript a general purpose language
+      li Provide an ecosystem of libraries
+
+  section
+    h2 What's the point?
+    ul
+      li Main motivation: asynchronous programming using callbacks
+        
+        pre: code.
+          // example from nodejs.org
+          var http = require('http');
+          http.createServer(function (req, res) {
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.end('Hello World\n');
+          });
+          http.listen(1337, '127.0.0.1');
+          console.log('Server running at http://127.0.0.1:1337/');
+
+      li You're programming JavaScript on the client, <em>why not on the server</em>?
+
+  section
+    h2 Super Short Intro
+    ul
+      li Installing Node.js with Homebrew
+        |(or download installer package from nodejs.org)
+
+        pre: code.
+          $ brew install node
+
+      li Start a REPL
+      
+        pre: code.
+          $ node
+          > console.log("Hello Node.js");
+          Hello Node.js
+
+      li Install a library (add -g for global installation)
+
+        pre: code.
+          $ npm install [-g] &lt;package&gt;
+
+      li List installed packages
+
+        pre: code.
+          $ npm list [-g]
+
+  section
+    h2 Working with packages
+    ul 
+      li Importing a package is done using the <code>require</code> function
+      li It returns an object providing the interface to the library
+      li Therefore, we must USE the return value 
+       
+        pre: code.
+          // assign return value to variable so we can use it
+          var fs = require('fs'); 
+
+          // open file and print contents to console
+          fs.readFile('data.txt', function (err, data) {
+            if (err)
+              throw err;
+            if (data)
+              console.log(data.toString('utf8'));
+          });
+
+
+  section
+    h2 Writing a Node.js package
+    ul
+      li Node.js provides two pre-defined variables:<br/>
+        |<code>module</code> and <code>exports</code>
+      li <code>module</code> refers to the current module 
+      li <code>exports</code> is an object that contains the <em>module interface</em>
+      li In other words, when we call <code>require</code>, the return value is
+        |the modules <code>exports</code> object
+      li Note that <code>exports</code> is a property of <code>module</code>, in fact
+        
+        pre: code.
+          exports == module.exports
+
+  section
+    h2 Using exports
+    ul
+      li It makes sense to use <code>exports</code> if our module consists mainly 
+        |of <em>functions</em>
+      li Here's a simple example:
+
+        pre: code.
+          // file: hello.js
+          exports.hello = function(thing) {
+            console.log('Hello ' + thing);
+          }
+
+      li In the REPL we can now do this:
+
+        pre: code.
+          // prints "Hello Node.js"
+          require('./hello').hello('Node.js');
+
+  section
+    h2 Using module.exports
+    ul
+      li It makes sense to use <code>module.exports</code> if our module provides 
+        |a <em>class interface</em>
+        
+        pre: code.
+          // file: car.js
+          var Car = function(name) {
+            this.name = name;
+          }
+          
+          Car.prototype.drive = function() {
+            console.log(this.name + " goes vroom!");
+          }
+          
+          module.exports = Car; // export the constructor
+
+      li Now we can use it like this:
+
+        pre: code.
+          var Car = require('./car');
+          var ferrari = new Car('Ferrari');
+          ferrari.drive();
