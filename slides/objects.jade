@@ -1,6 +1,6 @@
 section
   section
-    h1 Objects
+    h1 Object Basics
 
   section
     :markdown
@@ -97,28 +97,3 @@ section
           // bar=2
           // other=string
 
-  section
-    h2 Objects are HashMaps, Part III
-    ul 
-      li If objects are hashmaps, and functions are objects – <br/>
-        |What's to stop us from doing this?
-
-        pre: code.
-          // function instead of object literal
-          var obj = function() {};
-          obj.foo = 1;
-          obj.bar = 2;
-          obj.other = 'string';
-
-          for (var key in obj) {
-            console.log(key + '=' + obj[key]);
-          }
-
-      li Result: it works!
-
-        pre: code.
-          foo=1
-          bar=2
-          other=string
-
-      li Question: Does that seem like a good idea?
