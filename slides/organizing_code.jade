@@ -33,6 +33,10 @@ section
             // '$' inside the closure references jQuery
           })(jQuery);
 
+    aside.notes
+      Here's an interesting fact about JavaScript:
+      the <em>only</em> thing that creates scope is a function.
+
   section
     h2 Exporting functionality
     ul
@@ -44,10 +48,14 @@ section
           var Module = (function() {
             var module = {};
 
+            // internals stay private
+            var foo = something();
+            function internalHelper() { ... }
+
+            // exportable functions defined on the module
             module.method1 = function() {
               // ...
             }
-
             module.method2 = function() {
               // ...
             }
@@ -76,7 +84,7 @@ section
             return module;
           })(Module);
 
-      li.fragment Optionally: loose coupling
+      li.fragment Better: loose coupling
 
         pre: code.javascript.
           var Module = (function(module) {
