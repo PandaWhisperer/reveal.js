@@ -19,13 +19,14 @@ section
     h2 The Basic Pattern
     ul
       li Wrap entire code into an <em>anonymous, self-executing</em> function
+        |(also called <em>IIFE</em>)
 
         pre: code.javascript.
           (function() {
             // code here
           })();
 
-      li Closure provides a "safe" place for internal variables etc.
+      li Provides a "safe" place for internal variables etc.
       li We can make dependencies explicit by adding them as parameters
 
         pre: code.javascript.
@@ -53,10 +54,10 @@ section
             function internalHelper() { ... }
 
             // exportable functions defined on the module
-            module.method1 = function() {
+            module.func1 = function() {
               // ...
             }
-            module.method2 = function() {
+            module.func2 = function() {
               // ...
             }
 

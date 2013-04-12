@@ -1,6 +1,6 @@
 section
   section
-    h1 Working with Objects
+    h1 Object Orientation
 
   section
     h2 Object Orientation
@@ -11,7 +11,6 @@ section
           - Properties can be acessed using either `[]` or dot-notation
           - We can construct objects using literal notation (JSON)
           - Functions are values, just like primitive types
-      li Next step: let's make some "real" objects!
 
   section
     h2 Object Orientation, Part II
@@ -86,7 +85,7 @@ section
                         //      console.log(this.name + " goes vroom!");
                         //    }
 
-          ferrari.drive == ford.drive // -> false (duh!)
+          ferrari.drive == ford.drive // -> false
 
       li We're wasting resources by defining the same function <em>twice</em>
       li How can two objects share the same functionality?
@@ -94,28 +93,31 @@ section
   section
     h2 Enter the Prototype
     ul
-      li Objects have a hidden property called <code>prototype</code>
+      li Functions have a hidden property called <code>prototype</code>
       li This is actually just another object
       li However, many objects can share the same prototype
-      li Properties defined on the prototype will be <em>shared</em> between 
+      li Properties defined on the prototype will be shared between 
         |all objects with the same prototype
 
   section
     h2 The Prototype
     ul
-      li And here's how to use it:
+      li Here's how to use it:
 
         pre(style="width: 110%"): code.
           function Car(name) {
             this.name = name;
           }
 
+          // default prototype is an empty object
+          Car.prototype; // -> {}
+
           // define method(s) on the prototype
           Car.prototype.drive = function() {
             console.log(this.name + " goes vroom!");
           };
 
-      li.fragment Result:
+      li.fragment Now we can do this:
 
         pre(style="width: 110%"): code.
           var ferrari = new Car("Ferrari");
@@ -133,7 +135,7 @@ section
       li In addition to allocating a new object and calling the constructor on it,
         |the <code>new</code> operator has another side effect
       li It sets the hidden property <code>__proto__</code> of the new object to
-        |the value of <code>prototype</code> property of the constructor
+        |the <code>prototype</code> of its constructor function
 
         pre: code.javascript.
           ferrari.__proto__; // -> { drive: [Function] }

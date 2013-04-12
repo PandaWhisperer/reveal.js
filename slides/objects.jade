@@ -67,9 +67,9 @@ section
 
       li.fragment To remove a property, use the <code>delete</code> operator
 
-        pre: code.
-          delete obj.foo;
-          obj;          // -> { value: 42 }
+        pre: code.javascript.
+          delete obj.foo; // or delete obj['foo']
+          obj;            // -> { value: 42 }
 
       li.fragment Setting the value to <code>null</code> or <code>undefined</code>
         |would only remove the <em>value</em>, not the property itself!

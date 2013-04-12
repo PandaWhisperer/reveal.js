@@ -24,7 +24,7 @@ section
           ferarri.wheels; // -> 4
 
   section
-    h2 The Prototype, Part IV
+    h2 Dynamic inheritance
     ul
       li What if we add something to the <code>Vehicle</code> prototype?
 
@@ -34,7 +34,9 @@ section
             return this.wheels / 2;
           }
 
-          show(ferrari);
+          for (var key in ferrari) { 
+            console.log(key + '=' + ferrari[key]);
+          }
 
       li.fragment Result?
 
@@ -48,45 +50,17 @@ section
         |of our <code>Car</code> instance
       li.fragment We didn't even have to call the constructor again
 
-  section
-    :markdown
-      ## What we've learned
-      * All objects that share the same *prototype* share all
-        the properties defined on that prototype
-      * 
-
-  section
-    h2 The Prototype, Part II
-    ul
-      li Let's go back to our
-        a(href='#/2/4') previous question
-
-        pre: code.
-          function show(obj) {
-            for (var key in obj) {
-              console.log(key + "=" + obj[key]);
-            }
-          }
-
-          show(ferrari);
-
-      li Result:
-
-        pre: code.
-          name=Ferrari
-          drive=function () {
-            console.log(this.name + " goes vroom!");
-          }
 
 
   section
     :markdown
       ## What have we learned?
+      * All objects that share the same *prototype* share all
+        the properties defined on that prototype
       * `for in` iterates over *all* properties, 
         including those defined on the *prototype*
       * In fact, looking up a property of an object traverses the
         *entire* "prototype-chain" until either a match is 
         found or the end of the chain is reached <br/>
         (i.e. `prototype == undefined`)
-      * This is the *essence* of JavaScript's object model
 

@@ -19,10 +19,12 @@ section
         pre: code.
           // example from nodejs.org
           var http = require('http');
+          // create server by providing a request callback
           http.createServer(function (req, res) {
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end('Hello World\n');
           });
+          // start server
           http.listen(1337, '127.0.0.1');
           console.log('Server running at http://127.0.0.1:1337/');
 
@@ -32,7 +34,7 @@ section
     h2 Super Short Intro
     ul
       li Installing Node.js with Homebrew
-        |(or download installer package from nodejs.org)
+        |(or download installer package from <a href="http://nodejs.org">nodejs.org</a>)
 
         pre: code.
           $ brew install node
@@ -59,7 +61,8 @@ section
     ul 
       li Importing a package is done using the <code>require</code> function
       li It returns an object providing the interface to the library
-      li Therefore, we must USE the return value 
+      li In node.js, global state is <em>NOT</em> shared between files
+      li Therefore, we <em>must</em> use the return value 
        
         pre: code.
           // assign return value to variable so we can use it
@@ -79,7 +82,7 @@ section
     ul
       li Node.js provides two pre-defined variables:<br/>
         |<code>module</code> and <code>exports</code>
-      li <code>module</code> refers to the current module 
+      li <code>module</code> refers to the current module
       li <code>exports</code> is an object that contains the <em>module interface</em>
       li In other words, when we call <code>require</code>, the return value is
         |the modules <code>exports</code> object
