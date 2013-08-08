@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>JavaScript – Y U NO Make Sense?</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Christoph Wagner &lt;cwagner@oversee.net&gt;">
+    <meta name="description" content="Presentation about JavaScript, to be given at Oversee.net Brown Bag Lunch">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+    <!-- For syntax highlighting-->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- If the query includes 'print-pdf', use the PDF print sheet-->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+      
+    </script><!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script><![endif]-->
+  </head>
+  <body>
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide-->
+      <div class="slides">
+        <section>
+          <h1>JavaScript</h1>
+          <h2>Y U NO Make Sense?</h2><img src="images/y_u_no_guy.png" style="height:50%;width:35%;border:none;box-shadow:none;">
+          <h4>Christoph Wagner</h4>
+        </section>
+        <section><h2>Motivation</h2>
+
+<h3>Why bother?</h3>
+
+<ul>
+<li>JavaScript is a "necessary evil"</li>
+<li>But it doesn&#39;t have to be evil</li>
+<li>Write cleaner, more maintainable code</li>
+<li>CoffeeScript</li>
+<li>Node.js</li>
+</ul>
+        </section>
+        <section><h2>Overview</h2>
+
+<h3>What we&#39;ll cover</h3>
+
+<ul>
+<li>Last month I sent an email asking for feedback on JavaScript</li>
+<li>Received a total of 12 reponses (thanks!)</li>
+<li>Most people wanted to learn about...
+<ul><li>Object orientation</li>
+<li>Organizing your code</li>
+<li>Writing jQuery plugins (not today)</li>
+<li>Node.js (a little bit)</li></ul></li>
+</ul>
+        </section>
+        <section>
+          <section>
+            <h1>Object Basics</h1>
+          </section>
+          <section><h2>Objects</h2>
+
+<h3>A quick recap</h3>
+
+<ul>
+<li>JavaScript is an object-oriented language</li>
+<li>Everything in JavaScript acts like an object: <br/>
+numbers, strings, even functions</li>
+<li>There are only two exceptions to this rule: <br/>
+<code>null</code> and <code>undefined</code></li>
+</ul>
+            <pre><code>
+                false.toString();     // -> 'false'
+                [1, 2, 3].toString(); // -> '1, 2, 3'
+                
+                // functions are objects too:
+                function Foo() {}
+                Foo.bar = 1;
+                Foo.bar;          // -> 1
+                
+                var undef;        // value will be undefined
+                undef.toString(); // TypeError: Cannot call method 'toString' of undefined
+                </code></pre>
+            <aside class="notes">
+              <Mention>that 'undefined' is not a protected name and can in fact be reassigned</Mention>
+            </aside>
+          </section>
+          <section>
+            <h2>Sometimes it's not that obvious</h2>
+            <ul>
+              <li>Why does this not work?</li>
+              <pre><code>
+                  2.toString();         // -> SyntaxError
+                  </code></pre>
+              <li class="fragment">What's going on here?
+                <ul>
+                  <li>Period causes parser to assume this is a floating point number</li>
+                  <li>Next token is expected to be a digit, not a property</li>
+                </ul>
+              </li>
+              <li class="fragment">How do we fix it? Force the parser to change its mind:
+                <pre><code>
+                    2..toString();    // second dot works correctly
+                    2 .toString();    // space before the dot
+                    (2).toString();   // force evaluation order
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Objects are Hashmaps</h2>
+            <ul>
+              <li>Objects in JavaScript map keys to values:
+                <pre><code>
+                    // empty object literal
+                    var obj = {};
+                    
+                    // literal object with properties (JSON)
+                    var obj = { foo: "bar", value: 42 };
+                    </code></pre>
+              </li>
+              <li class="fragment">We can access them in two ways:
+                <pre><code>
+                    obj.value;    // -> 42
+                    obj['value']  // -> 42
+                    </code></pre>
+              </li>
+              <li class="fragment">To remove a property, use the <code>delete</code> operator
+                <pre><code class="javascript">
+                    delete obj.foo; // or delete obj['foo']
+                    obj;            // -> { value: 42 }
+                    </code></pre>
+              </li>
+              <li class="fragment">
+                Setting the value to <code>null</code> or <code>undefined</code>
+                would only remove the <em>value</em>, not the property itself!
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Objects are HashMaps, Part II</h2>
+            <ul>
+              <li>
+                We can iterate over all keys of an object <br/>
+                by using a <code>for in</code> loop:
+                <pre><code>
+                    var obj = {
+                      foo: 1,
+                      bar: 2,
+                      other: 'string'
+                    };
+                    
+                    for (var key in obj) {
+                      console.log(key + '=' + obj[key]);
+                    }
+                    
+                    // this prints out:
+                    // foo=1
+                    // bar=2
+                    // other=string
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h1>Object Orientation</h1>
+          </section>
+          <section>
+            <h2>Object Orientation</h2>
+            <ul>
+              <li>What we've learned so far:<ul>
+<li>Objects are hashmaps, mapping keys to values</li>
+<li>Properties can be acessed using either <code>[]</code> or dot-notation</li>
+<li>We can construct objects using literal notation (JSON)</li>
+<li>Functions are values, just like primitive types</li>
+</ul>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Object Orientation, Part II</h2>
+            <ul>
+              <li>Functions are values &rArr; we can assign them to properties
+                <pre><code>
+                    var car = {
+                      name: "Ferrari",
+                      drive: function() {
+                        console.log(this.name + " goes vroom!");
+                      }
+                    }
+                    
+                    car.drive();   // -> "Ferrari goes vroom!"
+                    </code></pre>
+              </li>
+              <li>A <em>method</em> is simply a property whose value is a <em>function</em></li>
+              <li>
+                When a function is called via an <em>object reference</em>,
+                <code>this</code> will point to the object it was invoked on
+              </li>
+              <li>We can also do this explicitly via <code>call</code> or <code>apply</code>
+                <pre><code>
+                    var drive = car.drive;
+                    drive(); // -> 'undefined goes vroom!'
+                    drive.call(car, arguments);    // using an argument list
+                    drive.apply(car, [arguments]); // using an argument array
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Object Orientation, Part III</h2>
+            <ul>
+              <li>This approach seems fairly limited</li>
+              <li>All we can do is construct literal objects</li>
+              <li>Essentially, all our objects are <em>singletons</em></li>
+              <li>What about classes, inheritance, etc.?</li>
+              <li>Solution: constructor functions</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Constructor functions</h2>
+            <ul>
+              <li>A constructor function is actually just a regular function</li>
+              <li>Only difference is the invocation with the <code>new</code> operator</li>
+              <li>By convention, we use a <em>capitalized</em> name
+                <pre><code>
+                    function Car(name) {
+                      this.name = name;
+                      this.drive = function() {
+                        console.log(this.name + " goes vroom!");
+                      };
+                      // NOTE: no return statement!
+                    }
+                    
+                    var ferrari = new Car("Ferrari");
+                    ferrari.drive();  // -> "Ferrari goes vroom!"
+                    
+                    var ford = new Car("Ford");
+                    ford.drive();     // -> "Ford goes vroom!"
+                    </code></pre>
+              </li>
+              <li>The <code>new</code> operator allocates a new object</li>
+              <li>The constructor function is invoked on the new object</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Constructor Functions, Part II</h2>
+            <ul>
+              <li>Problem with this approach?
+                <pre><code>
+                    ferrari.drive // -> function () {
+                                  //      console.log(this.name + " goes vroom!");
+                                  //    }
+                    ford.drive    // -> function () {
+                                  //      console.log(this.name + " goes vroom!");
+                                  //    }
+                                  
+                    ferrari.drive == ford.drive // -> false
+                    </code></pre>
+              </li>
+              <li>We're wasting resources by defining the same function <em>twice</em></li>
+              <li>How can two objects share the same functionality?</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Enter the Prototype</h2>
+            <ul>
+              <li>Functions have a hidden property called <code>prototype</code></li>
+              <li>This is actually just another object</li>
+              <li>However, many objects can share the same prototype</li>
+              <li>
+                Properties defined on the prototype will be shared between 
+                all objects with the same prototype
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>The Prototype</h2>
+            <ul>
+              <li>Here's how to use it:
+                <pre style="width: 110%"><code>
+                    function Car(name) {
+                      this.name = name;
+                    }
+                    
+                    // default prototype is an empty object
+                    Car.prototype; // -> {}
+                    
+                    // define method(s) on the prototype
+                    Car.prototype.drive = function() {
+                      console.log(this.name + " goes vroom!");
+                    };
+                    </code></pre>
+              </li>
+              <li class="fragment">Now we can do this:
+                <pre style="width: 110%"><code>
+                    var ferrari = new Car("Ferrari");
+                    ferrari.drive();  // -> "Ferrari goes vroom!"
+                    
+                    var ford = new Car("Ford");
+                    ford.drive();     // -> "Ford goes vroom!"
+                    
+                    ferrari.drive == ford.drive // -> true
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>The Prototype</h2>
+            <h3>What happens behind the scenes</h3>
+            <ul>
+              <li>
+                In addition to allocating a new object and calling the constructor on it,
+                the <code>new</code> operator has another side effect
+              </li>
+              <li>
+                It sets the hidden property <code>__proto__</code> of the new object to
+                the <code>prototype</code> of its constructor function
+                <pre><code class="javascript">
+                    ferrari.__proto__; // -> { drive: [Function] }
+                    ferrari.__proto__ == Car.prototype;  // -> true
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>The Prototype Chain</h2>
+            <ul>
+              <li>All objects have a <code>__proto__</code> property</li>
+              <li>This creates what is know as the <em>prototype chain</em>
+                <pre><code>
+                    ferrari.__proto__; // -> { drive: [Function] }
+                    ferrari.__proto__.__proto__; // -> {}
+                    ferrari.__proto__.__proto__.__proto__; // -> null
+                    </code></pre>
+              </li>
+              <li>
+                Every time we look up a property, JavaScript traverses the
+                entire chain in order to find it
+              </li>
+              <li><code>null</code> signals the end of the chain</li>
+              <li>If the property is not found, the result is <code>undefined</code></li>
+              <li>Only way to find out whether a property is inherited or not: <code>hasOwnProperty()</code></li>
+            </ul>
+          </section>
+          <section>
+            <h2>hasOwnProperty()</h2>
+            <ul>
+              <li>
+                To find out whether a property is defined on a given object or inherited,
+                JavaScript provides the <code>hasOwnProperty()</code> method
+              </li>
+              <li>This method is defined on <code>Object.prototype</code></li>
+              <li>Some examples:
+                <pre style="width:100%"><code class="javascript">
+                    ferrari.hasOwnProperty('name');  // -> true
+                    ferrari.hasOwnProperty('drive'); // -> false (inherited from prototype)
+                    Car.prototype.hasOwnProperty('drive');             // -> true
+                    Object.prototype.hasOwnProperty('hasOwnProperty'); // -> true
+                    </code></pre>
+              </li>
+              <li class="fragment">Watch out: It is possible to <em>redefine</em> <code>hasOwnProperty</code>!
+                <pre><code class="javascript">
+                    ferrari.hasOwnProperty = function() { return true; } // works!
+                    ferrari.hasOwnProperty('drive'); // -> true
+                    </code></pre>&rArr; DON'T DO THAT!
+              </li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h1>Inheritance</h1>
+          </section>
+          <section>
+            <h2>Inheritance</h2>
+            <ul>
+              <li>Let's take this one step further:</li>
+              <li><code>Car.prototype</code> can be an arbitrary object</li>
+              <li>i.e. we can use an instance produced by another constructor 
+                <pre><code>
+                    function Vehicle(wheels) {
+                      this.wheels = wheels;
+                    }
+                    
+                    // redefine Car.prototype
+                    Car.prototype = new Vehicle(4);
+                    Car.prototype.drive = function() {...}
+                    
+                    var ferrari = new Car("Ferrari");
+                    var ford    = new Car("Ford");
+                    
+                    ferarri.wheels; // -> 4
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Dynamic inheritance</h2>
+            <ul>
+              <li>What if we add something to the <code>Vehicle</code> prototype?
+                <pre><code>
+                    Vehicle.prototype.getAxes = function() {
+                      // assume 2 wheels per axis
+                      return this.wheels / 2;
+                    }
+                    
+                    for (var key in ferrari) { 
+                      console.log(key + '=' + ferrari[key]);
+                    }
+                    </code></pre>
+              </li>
+              <li class="fragment">Result?
+                <pre><code>
+                    name=Ferrari
+                    wheels=4
+                    drive=function () {...}
+                    getAxes=function () {...}
+                    </code></pre>
+              </li>
+              <li class="fragment">
+                The new function automatically appears to be a member
+                of our <code>Car</code> instance
+              </li>
+              <li class="fragment">We didn't even have to call the constructor again</li>
+            </ul>
+          </section>
+          <section><h2>What have we learned?</h2>
+
+<ul>
+<li>All objects that share the same <em>prototype</em> share all
+the properties defined on that prototype</li>
+<li><code>for in</code> iterates over <em>all</em> properties, 
+including those defined on the <em>prototype</em></li>
+<li>In fact, looking up a property of an object traverses the
+<em>entire</em> "prototype-chain" until either a match is 
+found or the end of the chain is reached <br/>
+(i.e. <code>prototype == undefined</code>)</li>
+</ul>
+          </section>
+        </section>
+        <section>
+          <section><h1>Organizing Your Code</h1>
+          </section>
+          <section><h2>The Module Pattern</h2>
+
+<ul>
+<li>Biggest challenges to modular code:
+<ul><li>Global variables shared accross files</li>
+<li>Encapsulation (keeping your privates private)</li></ul></li>
+<li>Common approach: the module pattern
+<ul><li>widely used (jQuery plugins, Twitter Bootstrap, etc.)</li>
+<li>flexible</li>
+<li>simple</li></ul></li>
+</ul>
+          </section>
+          <section>
+            <h2>The Basic Pattern</h2>
+            <ul>
+              <li>
+                Wrap entire code into an <em>anonymous, self-executing</em> function
+                (also called <em>IIFE</em>)
+                <pre><code class="javascript">
+                    (function() {
+                      // code here
+                    })();
+                    </code></pre>
+              </li>
+              <li>Provides a "safe" place for internal variables etc.</li>
+              <li>We can make dependencies explicit by adding them as parameters
+                <pre><code class="javascript">
+                    (function($) {
+                      // '$' inside the closure references jQuery
+                    })(jQuery);
+                    </code></pre>
+              </li>
+            </ul>
+            <aside class="notes">
+              <Here>'s an interesting fact about JavaScript:</Here>
+              <the><em>only</em> thing that creates scope is a function.</the>
+            </aside>
+          </section>
+          <section>
+            <h2>Exporting functionality</h2>
+            <ul>
+              <li>
+                What if the point of our code is to provide
+                functionality to other parts of the code?
+              </li>
+              <li>We need a way to export objects/functions
+                <pre><code class="javascript">
+                    var Module = (function() {
+                      var module = {};
+                      
+                      // internals stay private
+                      var foo = something();
+                      function internalHelper() { ... }
+                      
+                      // exportable functions defined on the module
+                      module.func1 = function() {
+                        // ...
+                      }
+                      module.func2 = function() {
+                        // ...
+                      }
+                      
+                      return module;
+                    })();
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Augmentation / Submodules</h2>
+            <ul>
+              <li>Sometimes our modules may become more complicated</li>
+              <li>So we want to spread them over several files</li>
+              <li>Solution: pass existing module into closure
+                <pre><code class="javascript">
+                    var Module = (function(module) {
+                      // we can add new methods...
+                      module.method3 = function() { ... }
+                      
+                      // ...or an entire submodule
+                      module.submodule = {
+                        method1: function() { ... },
+                        method2: function() { ... }
+                      }
+                      
+                      return module;
+                    })(Module);
+                    </code></pre>
+              </li>
+              <li class="fragment">Better: loose coupling
+                <pre><code class="javascript">
+                    var Module = (function(module) {
+                      // ...
+                    })(Module || {}); // parts can be loaded in any order</code></pre>
+              </li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h1>Node.js</h1>
+          </section>
+          <section>
+            <h2>Node.js Overview</h2>
+            <ul>
+              <li>Standalone JavaScript implementation for the CLI</li>
+              <li>Basically Google V8 ripped out of the browser</li>
+              <li>Comes with a class library for stuff like file I/O</li>
+              <li>Makes JavaScript a general purpose language</li>
+              <li>Provides a packaging system and an ecosystem of libraries</li>
+            </ul>
+          </section>
+          <section>
+            <h2>What's the point?</h2>
+            <ul>
+              <li>Main motivation: asynchronous programming using callbacks
+                <pre><code>
+                    // example from nodejs.org
+                    var http = require('http');
+                    // create server by providing a request callback
+                    http.createServer(function (req, res) {
+                      res.writeHead(200, {'Content-Type': 'text/plain'});
+                      res.end('Hello World\n');
+                    });
+                    // start server
+                    http.listen(1337, '127.0.0.1');
+                    console.log('Server running at http://127.0.0.1:1337/');
+                    </code></pre>
+              </li>
+              <li>You're programming JavaScript on the client, <em>why not on the server</em>?</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Super Short Intro</h2>
+            <ul>
+              <li>
+                Installing Node.js with Homebrew
+                (or download installer package from <a href="http://nodejs.org">nodejs.org</a>)
+                <pre><code>
+                    $ brew install node
+                    </code></pre>
+              </li>
+              <li>Start a REPL
+                <pre><code>
+                    $ node
+                    > console.log("Hello Node.js");
+                    Hello Node.js
+                    </code></pre>
+              </li>
+              <li>Install a package (add -g for global installation)
+                <pre><code>
+                    $ npm install [-g] &lt;package&gt;
+                    </code></pre>
+              </li>
+              <li>List installed packages
+                <pre><code>
+                    $ npm list [-g]
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Working with packages</h2>
+            <ul> 
+              <li>Importing a package is done using the <code>require</code> function</li>
+              <li>It returns an object providing the interface to the library</li>
+              <li>In node.js, global state is <em>NOT</em> shared between files</li>
+              <li>Therefore, we <em>must</em> use the return value 
+                <pre><code>
+                    // assign return value to variable so we can use it
+                    var fs = require('fs'); 
+                    
+                    // open file and print contents to console
+                    fs.readFile('data.txt', function (err, data) {
+                      if (err)
+                        throw err;
+                      if (data)
+                        console.log(data.toString('utf8'));
+                    });
+                    
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Writing a Node.js package</h2>
+            <ul>
+              <li>
+                Node.js provides two pre-defined variables:<br/>
+                <code>module</code> and <code>exports</code>
+              </li>
+              <li><code>module</code> refers to the current module</li>
+              <li><code>exports</code> is an object that contains the <em>module interface</em></li>
+              <li>
+                In other words, when we call <code>require</code>, the return value is
+                the modules <code>exports</code> object
+              </li>
+              <li>Note that <code>exports</code> is a property of <code>module</code>, in fact
+                <pre><code>
+                    exports == module.exports
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Using exports</h2>
+            <ul>
+              <li>
+                It makes sense to use <code>exports</code> if our module consists mainly 
+                of <em>functions</em>
+              </li>
+              <li>Here's a simple example:
+                <pre><code>
+                    // file: hello.js
+                    exports.hello = function(thing) {
+                      console.log('Hello ' + thing);
+                    }
+                    </code></pre>
+              </li>
+              <li>In the REPL we can now do this:
+                <pre><code>
+                    // prints "Hello Node.js"
+                    require('./hello').hello('Node.js');
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Using module.exports</h2>
+            <ul>
+              <li>
+                It makes sense to use <code>module.exports</code> if our module provides 
+                a <em>class interface</em>
+                <pre><code>
+                    // file: car.js
+                    var Car = function(name) {
+                      this.name = name;
+                    }
+                    
+                    Car.prototype.drive = function() {
+                      console.log(this.name + " goes vroom!");
+                    }
+                    
+                    module.exports = Car; // export the constructor
+                    </code></pre>
+              </li>
+              <li>Now we can use it like this:
+                <pre><code>
+                    var Car = require('./car');
+                    var ferrari = new Car('Ferrari');
+                    ferrari.drive();
+                    </code></pre>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>exports vs. module.exports</h2>
+            <ul> 
+              <li>Of course, we could have also done this:
+                <pre><code>
+                    // file: car.js
+                    var Car = function(name) {
+                      // ...
+                    }
+                    
+                    exports.Car = Car;
+                    </code></pre>
+              </li>
+              <li>In which case, we would use our module like this:
+                <pre><code>
+                    var Car = require('./car').Car;
+                    var ferrari = new Car('Ferrari');
+                    ferrari.drive();
+                    </code></pre>
+              </li>
+              <li>This approach may make sense if our module wants to export more than one class</li>
+            </ul>
+          </section>
+        </section>
+        <section><h2>Links / further reading</h2>
+
+<ul>
+<li>JavaScript Garden
+<a href="http://bonsaiden.github.com/JavaScript-Garden/">http://bonsaiden.github.com/JavaScript-Garden/</a></li>
+<li>Eloquent JavaScript <br/>
+<a href="http://eloquentjavascript.net">http://eloquentjavascript.net</a></li>
+<li>Mozilla Developer Network (MDN)
+<a href="https://developer.mozilla.org/en-US/docs/JavaScript">https://developer.mozilla.org/en-US/docs/JavaScript</a>
+<ul><li>Especially:</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Details_of_the_Object_Model">Details of the Object Model</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Inheritance_and_the_prototype_chain">Inheritance and the prototype chain</a></li></ul></li>
+<li>Superhero.js <br/>
+<a href="http://www.superherojs.com">http://www.superherojs.com</a></li>
+<li>Node.js <br/>
+<a href="http://www.nodejs.org">http://www.nodejs.org</a></li>
+</ul>
+        </section>
+      </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+    <script>var options = {"theme":"beige"};</script>
+    <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      var defaults = {
+        controls: true,
+        progress: true,
+        history: true,
+        
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+        
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      }
+      
+      // copy options from slides.json
+      for (var option in options) defaults[option] = options[option];
+      
+      Reveal.initialize(defaults);
+    </script>
+  </body>
+</html>
